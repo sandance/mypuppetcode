@@ -1,22 +1,26 @@
 class matplotlib () inherits matplotlib::params {
-	package { 'python-pip':
-			ensure => installed,
-	}
-
-	package { 'matplotlib':
-			ensure => present,
-			provider => pip,
-		#	version => $matplotlib_version,
-			require => Package["python-pip"],
-	}
-
-	
-#	exec { "apt-get update":
-#			path => ["/usr/bin","/usr/sbin","/bin","/sbin"],
-#	}
-
-	package { ["libfreetype6-dev","libpng-dev"]:
-			ensure => installed,
-			require => Package["matplotlib"],
-	}	
-}	 
+    include airsage
+    include python
+    case $::centosmajrelease {
+        "7": {
+            package { "python-matplotlib.x86_64":
+                ensure => present,
+            }
+        }
+        /[5,6]/: {
+            package { $matplotlib_dependencies:
+                ensure => present,
+                require => Yumrepo["Operations"],
+            }
+            python::package {
+                'matplotlib':
+                    package => 'matplotlib',
+                    version => "$matplotlib_version",
+                    require => [
+                        Package[$matplotlib_dependencies]
+                    ],
+            }
+        }
+        default: { fail("No match for centosmajrelease: $::centosmajrelease .") }
+    }
+}

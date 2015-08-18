@@ -1,0 +1,13 @@
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
+
+# Use our Python, not the system Python.
+source <%= @prefix -%>/activate_python.sh
+export LD_LIBRARY_PATH=$HOME/lib:$HOME/.local/lib:$LD_LIBRARY_PATH
+export PYTHONPATH=$HOME/lib/python<%= @python_major_version -%>/site-packages:$HOME/.local/lib/python<%= @python_major_version -%>/site-package:$PYTHONPATH
+export PATH=$HOME/bin:$HOME/.local/bin:$PATH
+
